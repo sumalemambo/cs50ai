@@ -99,20 +99,15 @@ def shortest_path(source, target):
         if frontier.empty():
             return None
         parent_node = frontier.remove()
-        explored_set.append(parent_node)
+        explored_set.append(parent_node.state)
         if parent_node.state == target:
             break
         for neighbor in neighbors_for_person(parent_node.state):
-            i = 0
-            while i < len(explored_set):
-                """
-                We need to explore a state only once because the first action to reach it
-                will yield the shortest path
-                """
-                if explored_set[i].state == neighbor[1]:
-                    break
-                i += 1
-            if i == len(explored_set):
+            """
+            We need to explore a state only once because the first action to reach it
+            will yield the shortest path
+            """
+            if neighbor[1] not in explored_set:
                 frontier.add(Node(neighbor[1], parent_node, neighbor[0]))
     result = []
     while parent_node.parent is not None:
