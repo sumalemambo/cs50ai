@@ -177,6 +177,10 @@ class MinesweeperAI():
             sentence.mark_safe(cell)
 
     def knowledge_exists(self, cells):
+        """
+        Returns true if there is an existing sentence with 
+        the same cells, False otherwise
+        """
         for sentence in self.knowledge:
             if sentence.cells == cells:
                 return True
@@ -184,7 +188,8 @@ class MinesweeperAI():
 
     def infer_knowledge_sentences(self):
         """
-
+        Updates sentences knowledge representation using
+        inferences to find mines and safe cells
         """
         while True:
             bool_val = False
@@ -202,6 +207,8 @@ class MinesweeperAI():
     
     def add_new_sentences(self):
         """
+        Adds new sentences to knowledge using the subset difference
+        method.
         Keep caution to not modify list while iterating over it
         """
         queue = []
@@ -214,8 +221,9 @@ class MinesweeperAI():
                             queue.append(Sentence(diff_set, sentence2.count
                              - sentence1.count))
             if len(queue) > 0:
-                self.knowledge.append(queue.pop())
-                self.infer_knowledge_sentences()
+                while len(queue) > 0:
+                    self.knowledge.append(queue.pop())
+                    self.infer_knowledge_sentences()
             else:
                 break
 
