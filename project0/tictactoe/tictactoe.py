@@ -63,22 +63,24 @@ def winner(board):
     """
     # Check rows
     for i in range(0, len(board)):
-        j = 0
-        while j < len(board[0]):
-            if (board[i][j] is EMPTY) or (board[i][j] is not board[i][0]):
-                break
-            j += 1
-        if j == len(board[0]):
-            return board[i][0]
+        if board[i][0] is not EMPTY:
+            j = 1
+            while j < len(board[0]):
+                if board[i][j] is not board[i][0]:
+                    break
+                j += 1
+            if j == len(board[0]):
+                return board[i][0]
     # Check columns
     for j in range(0, len(board[0])):
-        i = 0
-        while i < len(board):
-            if (board[i][j] is EMPTY) or (board[i][j] is not board[0][j]):
-                break
-            i += 1
-        if i == len(board):
-            return board[0][j]
+        if board[0][j] is not EMPTY:
+            i = 1
+            while i < len(board):
+                if board[i][j] is not board[0][j]:
+                    break
+                i += 1
+            if i == len(board):
+                return board[0][j]
     # Assuming square board, check diagonal
     diagonal = 0
     anti_diagonal = 0
