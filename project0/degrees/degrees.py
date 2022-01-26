@@ -91,7 +91,7 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    explored_set = []
+    explored_set = set()
     frontier = QueueFrontier()
     frontier.add(Node(source, None, None))
     
@@ -99,7 +99,7 @@ def shortest_path(source, target):
         if frontier.empty():
             return None
         parent_node = frontier.remove()
-        explored_set.append(parent_node.state)
+        explored_set.add(parent_node.state)
         if parent_node.state == target:
             break
         for neighbor in neighbors_for_person(parent_node.state):
