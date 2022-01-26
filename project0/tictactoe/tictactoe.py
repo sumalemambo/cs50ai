@@ -135,13 +135,14 @@ def minimax(board):
                 v = val
                 best_action = action
         return best_action
-    v = math.inf
-    for action in actions(board):
-        val = max_value(result(board, action))
-        if v > val:
-            v = val
-            best_action = action
-    return best_action
+    else:
+        v = math.inf
+        for action in actions(board):
+            val = max_value(result(board, action))
+            if v > val:
+                v = val
+                best_action = action
+        return best_action
 
 
 def max_value(board):
