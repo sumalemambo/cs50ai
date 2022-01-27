@@ -176,61 +176,44 @@ class MinesweeperAI():
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
-    def knowledge_exists(self, cells):
-        """
-        Returns true if there is an existing sentence with 
-        the same cells, False otherwise
-        """
-        for sentence in self.knowledge:
-            if sentence.cells == cells:
-                return True
-        return False
 
     def infer_knowledge_sentences(self):
         """
-        Updates sentences knowledge representation using
-        inferences to find mines and safe cells
+        Uses sentences in knowledge to try to infer if a cell is safe or a mine
+        and update the sentences knowledge accordingly
         """
-        while True:
-            bool_val = False
-            for sentence in self.knowledge:
-                for safe_cell in sentence.known_safes():
-                    if safe_cell not in self.safes:
-                        bool_val = True
-                        self.mark_safe(safe_cell)
-                for mine_cell in sentence.known_mines():
-                    if mine_cell not in self.mines:
-                        bool_val = True
-                        self.mark_mine(mine_cell)
-            if bool_val is not True:
-                break
+        for sentence in self.knowledge:
+            for safe_cell in sentence.known_safes():
+                if safe_cell not in self.safes:
+                    self.mark_safe(safe_cell)
+                    return True
+            for mine_cell in sentence.known_mines():
+                if mine_cell not in self.mines:
+                    self.mark_mine(mine_cell)
+                    return True
+        return False
 
 
-    def helper(self):
+    def subset_diff_sentence(self):
+        """
+        Uses the subset difference method to create a new sentence and
+        add it to knowledge if it doesnt already exists.
+        """
         for sentence1 in self.knowledge:
             for sentence2 in self.knowledge:
                 if sentence1 != sentence2:
                     if sentence1.cells.issubset(sentence2.cells):
+
                         sentence = Sentence(sentence2.cells - sentence1.cells, 
                         sentence2.count - sentence1.count)
+
+                        # Check if sentence already exists
                         if sentence not in self.knowledge:
-                            return sentence
-        return None
+                            self.knowledge.append(sentence)
+                            self.infer_knowledge_sentences()
+                            return True
+        return False
 
-
-    def add_new_sentences(self):
-        """
-        Adds new sentences to knowledge using the subset difference
-        method.
-        Keep caution to not modify list while iterating over it
-        """
-        while True:
-            sentence = self.helper()
-            if sentence is not None:
-                self.knowledge.append(sentence)
-                self.infer_knowledge_sentences()
-            else:
-                break
 
     def add_knowledge(self, cell, count):
         """
@@ -259,12 +242,13 @@ class MinesweeperAI():
                     if (i, j) != cell:
                         if (i, j) in self.mines:
                             count -= 1
-                        elif (i, j) not in self.mines and (i, j) not in self.safes:
+                        elif (i, j) not in self.safes:
                             cells.add((i, j))
         if cells:
             self.knowledge.append(Sentence(cells, count))
         # 4
-        self.infer_knowledge_sentences()
+        while self.infer_knowledge_sentences():
+            continue
         # 5
         """
         (1) {A, E, F, G} = 1
@@ -273,7 +257,8 @@ class MinesweeperAI():
         (4) => {A, E, F} = 1  (3) and (2)
         (5) => {G} = 0  (1) and (4)
         """
-        self.add_new_sentences()
+        while self.subset_diff_sentence():
+            continue
 
 
     def make_safe_move(self):
