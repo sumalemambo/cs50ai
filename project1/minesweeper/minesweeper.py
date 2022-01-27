@@ -204,26 +204,31 @@ class MinesweeperAI():
                         self.mark_mine(mine_cell)
             if bool_val is not True:
                 break
-    
+
+
+    def helper(self):
+        for sentence1 in self.knowledge:
+            for sentence2 in self.knowledge:
+                if sentence1 != sentence2:
+                    if sentence1.cells.issubset(sentence2.cells):
+                        sentence = Sentence(sentence2.cells - sentence1.cells, 
+                        sentence2.count - sentence1.count)
+                        if sentence not in self.knowledge:
+                            return sentence
+        return None
+
+
     def add_new_sentences(self):
         """
         Adds new sentences to knowledge using the subset difference
         method.
         Keep caution to not modify list while iterating over it
         """
-        queue = []
         while True:
-            for sentence1 in self.knowledge:
-                for sentence2 in self.knowledge:
-                    if sentence1.cells.issubset(sentence2.cells):
-                        diff_set = sentence2.cells - sentence1.cells
-                        if not self.knowledge_exists(diff_set):
-                            queue.append(Sentence(diff_set, sentence2.count
-                             - sentence1.count))
-            if len(queue) > 0:
-                while len(queue) > 0:
-                    self.knowledge.append(queue.pop())
-                    self.infer_knowledge_sentences()
+            sentence = self.helper()
+            if sentence is not None:
+                self.knowledge.append(sentence)
+                self.infer_knowledge_sentences()
             else:
                 break
 
