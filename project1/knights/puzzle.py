@@ -32,7 +32,7 @@ knowledge1 = And(
     Or(BKnight, BKnave),
     # But not both
     Not(And(BKnight, BKnave)),
-    # If A is a knight, since knights always tell the truth, then A is knave and B is a knave
+    # If A is a knight, since knights always tell the truth, then A is knave and B is a knave and viceversa
     Biconditional(AKnight, And(AKnave, BKnave))
 )
 
